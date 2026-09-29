@@ -1,0 +1,670 @@
+{
+  "app_config": {
+    "app_name": {
+      "type": "string | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "super_admin_emails": {
+      "type": "string[]",
+      "optional": true
+    },
+    "system_settings": {
+      "type": "Json | null",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    }
+  },
+  "commission": {
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "corretor_id": {
+      "type": "string",
+      "optional": false
+    },
+    "corretor_nome": {
+      "type": "string | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "date": {
+      "type": "string",
+      "optional": false
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "notes": {
+      "type": "string | null",
+      "optional": true
+    },
+    "payment_status": {
+      "type": "Database[\"public\"][\"Enums\"][\"payment_status_enum\"]",
+      "optional": true
+    },
+    "percentage": {
+      "type": "number | null",
+      "optional": true
+    },
+    "property_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "proposal_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    },
+    "value": {
+      "type": "number",
+      "optional": false
+    }
+  },
+  "company": {
+    "cnpj": {
+      "type": "string | null",
+      "optional": true
+    },
+    "cor_primaria": {
+      "type": "string | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "creci": {
+      "type": "string | null",
+      "optional": true
+    },
+    "email": {
+      "type": "string | null",
+      "optional": true
+    },
+    "endereco": {
+      "type": "Json | null",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "logo_url": {
+      "type": "string | null",
+      "optional": true
+    },
+    "name": {
+      "type": "string",
+      "optional": false
+    },
+    "owner_email": {
+      "type": "string | null",
+      "optional": true
+    },
+    "owner_nome": {
+      "type": "string | null",
+      "optional": true
+    },
+    "owner_telefone": {
+      "type": "string | null",
+      "optional": true
+    },
+    "plano": {
+      "type": "Database[\"public\"][\"Enums\"][\"plano_enum\"]",
+      "optional": true
+    },
+    "settings": {
+      "type": "Json",
+      "optional": true
+    },
+    "slug": {
+      "type": "string | null",
+      "optional": true
+    },
+    "status": {
+      "type": "Database[\"public\"][\"Enums\"][\"company_status_enum\"]",
+      "optional": true
+    },
+    "telefone": {
+      "type": "string | null",
+      "optional": true
+    },
+    "trial_ate": {
+      "type": "string | null",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    }
+  },
+  "company_user": {
+    "ativo": {
+      "type": "boolean",
+      "optional": true
+    },
+    "comissao_pct": {
+      "type": "number",
+      "optional": true
+    },
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "creci": {
+      "type": "string | null",
+      "optional": true
+    },
+    "email": {
+      "type": "string",
+      "optional": false
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "must_change_password": {
+      "type": "boolean",
+      "optional": true
+    },
+    "nome": {
+      "type": "string | null",
+      "optional": true
+    },
+    "role": {
+      "type": "Database[\"public\"][\"Enums\"][\"user_role_enum\"]",
+      "optional": true
+    },
+    "ultimo_login": {
+      "type": "string | null",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    },
+    "user_id": {
+      "type": "string | null",
+      "optional": true
+    }
+  },
+  "lead": {
+    "assigned_to": {
+      "type": "string | null",
+      "optional": true
+    },
+    "bedrooms_min": {
+      "type": "number | null",
+      "optional": true
+    },
+    "budget_max": {
+      "type": "number | null",
+      "optional": true
+    },
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "email": {
+      "type": "string | null",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "interest_property_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "interest_type": {
+      "type": "Database[\"public\"][\"Enums\"][\"transaction_enum\"] | null",
+      "optional": true
+    },
+    "lost_reason": {
+      "type": "string | null",
+      "optional": true
+    },
+    "name": {
+      "type": "string",
+      "optional": false
+    },
+    "neighborhoods": {
+      "type": "string[] | null",
+      "optional": true
+    },
+    "notes": {
+      "type": "string | null",
+      "optional": true
+    },
+    "phone": {
+      "type": "string",
+      "optional": false
+    },
+    "source": {
+      "type": "Database[\"public\"][\"Enums\"][\"lead_source_enum\"]",
+      "optional": true
+    },
+    "status": {
+      "type": "Database[\"public\"][\"Enums\"][\"lead_status_enum\"]",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    }
+  },
+  "operational_cost": {
+    "amount": {
+      "type": "number",
+      "optional": false
+    },
+    "category": {
+      "type": "string | null",
+      "optional": true
+    },
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "date": {
+      "type": "string",
+      "optional": false
+    },
+    "description": {
+      "type": "string",
+      "optional": false
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "payment_status": {
+      "type": "Database[\"public\"][\"Enums\"][\"payment_status_enum\"]",
+      "optional": true
+    },
+    "recurring": {
+      "type": "boolean",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    }
+  },
+  "property": {
+    "address": {
+      "type": "Json",
+      "optional": false
+    },
+    "area_total": {
+      "type": "number | null",
+      "optional": true
+    },
+    "area_useful": {
+      "type": "number | null",
+      "optional": true
+    },
+    "bathrooms": {
+      "type": "number | null",
+      "optional": true
+    },
+    "bedrooms": {
+      "type": "number | null",
+      "optional": true
+    },
+    "captado_por": {
+      "type": "string | null",
+      "optional": true
+    },
+    "city": {
+      "type": "string | null",
+      "optional": true
+    },
+    "code": {
+      "type": "string | null",
+      "optional": true
+    },
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "condo_fee": {
+      "type": "number | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "description": {
+      "type": "string | null",
+      "optional": true
+    },
+    "features": {
+      "type": "string[] | null",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "iptu": {
+      "type": "number | null",
+      "optional": true
+    },
+    "listed_at": {
+      "type": "string | null",
+      "optional": true
+    },
+    "neighborhood": {
+      "type": "string | null",
+      "optional": true
+    },
+    "owner_email": {
+      "type": "string | null",
+      "optional": true
+    },
+    "owner_name": {
+      "type": "string | null",
+      "optional": true
+    },
+    "owner_phone": {
+      "type": "string | null",
+      "optional": true
+    },
+    "parking": {
+      "type": "number | null",
+      "optional": true
+    },
+    "photos": {
+      "type": "string[] | null",
+      "optional": true
+    },
+    "price": {
+      "type": "number",
+      "optional": false
+    },
+    "slug": {
+      "type": "string | null",
+      "optional": true
+    },
+    "state": {
+      "type": "string | null",
+      "optional": true
+    },
+    "status": {
+      "type": "Database[\"public\"][\"Enums\"][\"property_status_enum\"]",
+      "optional": true
+    },
+    "suites": {
+      "type": "number | null",
+      "optional": true
+    },
+    "title": {
+      "type": "string",
+      "optional": false
+    },
+    "transaction": {
+      "type": "Database[\"public\"][\"Enums\"][\"transaction_enum\"]",
+      "optional": false
+    },
+    "type": {
+      "type": "Database[\"public\"][\"Enums\"][\"property_type_enum\"]",
+      "optional": false
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    },
+    "video_url": {
+      "type": "string | null",
+      "optional": true
+    },
+    "zip_code": {
+      "type": "string | null",
+      "optional": true
+    }
+  },
+  "proposal": {
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "contract_url": {
+      "type": "string | null",
+      "optional": true
+    },
+    "corretor_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "lead_id": {
+      "type": "string",
+      "optional": false
+    },
+    "lead_name": {
+      "type": "string | null",
+      "optional": true
+    },
+    "observations": {
+      "type": "string | null",
+      "optional": true
+    },
+    "payment_terms": {
+      "type": "string | null",
+      "optional": true
+    },
+    "property_id": {
+      "type": "string",
+      "optional": false
+    },
+    "property_title": {
+      "type": "string | null",
+      "optional": true
+    },
+    "status": {
+      "type": "Database[\"public\"][\"Enums\"][\"proposal_status_enum\"]",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    },
+    "value": {
+      "type": "number",
+      "optional": false
+    }
+  },
+  "revenue": {
+    "amount": {
+      "type": "number",
+      "optional": false
+    },
+    "category": {
+      "type": "string | null",
+      "optional": true
+    },
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "date": {
+      "type": "string",
+      "optional": false
+    },
+    "description": {
+      "type": "string",
+      "optional": false
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "notes": {
+      "type": "string | null",
+      "optional": true
+    },
+    "payment_status": {
+      "type": "Database[\"public\"][\"Enums\"][\"payment_status_enum\"]",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    }
+  },
+  "user_roles": {
+    "company_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "role": {
+      "type": "Database[\"public\"][\"Enums\"][\"global_role_enum\"]",
+      "optional": false
+    },
+    "user_id": {
+      "type": "string",
+      "optional": false
+    }
+  },
+  "visit": {
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "corretor_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "corretor_nome": {
+      "type": "string | null",
+      "optional": true
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "feedback": {
+      "type": "string | null",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "lead_id": {
+      "type": "string | null",
+      "optional": true
+    },
+    "lead_name": {
+      "type": "string | null",
+      "optional": true
+    },
+    "lead_phone": {
+      "type": "string | null",
+      "optional": true
+    },
+    "notes": {
+      "type": "string | null",
+      "optional": true
+    },
+    "property_id": {
+      "type": "string",
+      "optional": false
+    },
+    "property_title": {
+      "type": "string | null",
+      "optional": true
+    },
+    "scheduled_at": {
+      "type": "string",
+      "optional": false
+    },
+    "status": {
+      "type": "Database[\"public\"][\"Enums\"][\"visit_status_enum\"]",
+      "optional": true
+    },
+    "updated_at": {
+      "type": "string",
+      "optional": true
+    }
+  },
+  "zone": {
+    "city": {
+      "type": "string | null",
+      "optional": true
+    },
+    "company_id": {
+      "type": "string",
+      "optional": false
+    },
+    "created_at": {
+      "type": "string",
+      "optional": true
+    },
+    "id": {
+      "type": "string",
+      "optional": true
+    },
+    "name": {
+      "type": "string",
+      "optional": false
+    },
+    "state": {
+      "type": "string | null",
+      "optional": true
+    }
+  }
+}

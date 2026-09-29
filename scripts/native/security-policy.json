@@ -1,0 +1,92 @@
+{
+  "version": 1,
+  "defaults": {
+    "require_auth": true
+  },
+  "modules": {
+    "db": {
+      "require_auth": true,
+      "raw_sql": {
+        "allowed": false
+      },
+      "row_level": {
+        "mode": "none",
+        "owner_field": "user_id"
+      },
+      "tables": {
+        "app_config": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "commission": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "company": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "company_user": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "lead": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "operational_cost": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "property": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "proposal": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "revenue": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "user_roles": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "visit": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "zone": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "profiles": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "template_owner": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "users": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "password_reset_tokens": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "magic_link_tokens": {
+          "read": "deny",
+          "write": "deny"
+        },
+        "email_verification_tokens": {
+          "read": "deny",
+          "write": "deny"
+        }
+      }
+    }
+  }
+}
