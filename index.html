@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>ImobFlow AI</title>    <!-- CRITICAL: DO NOT REMOVE/MODIFY THIS COMMENT OR THE SCRIPT BELOW -->
-        <!-- BLINK_PICKER_RUNTIME_V2:5c70bda2ba69 -->
+        <!-- BLINK_PICKER_RUNTIME_V2:239848ad2892 -->
     <script>(function(){
   'use strict';
   // ---- version handshake ----
@@ -26,6 +26,11 @@
   // and Escape-toggles, and the click handler routes clicks inside the editing
   // element through native browser caret behaviour.
   var inlineEditing = null;
+  // Origin of the editor that last messaged us; every post goes there (null = post nothing).
+  var editorOrigin = null;
+  var EDITOR_ORIGINS = ["https://blink.new","https://staging.blink.new","https://dev.blink.new","https://blink-preview.vercel.app","https://blink-staging.vercel.app","http://localhost:3000"];
+  var TEAM_PREVIEW_ORIGIN = new RegExp("^https:\\/\\/[a-z0-9-]+-blinkdotnew\\.vercel\\.app$");
+  var LOCAL_EDITOR_ORIGIN = new RegExp("^http:\\/\\/localhost:\\d+$");
   var INLINE_EDIT_DENY = { INPUT: 1, TEXTAREA: 1, SELECT: 1, OPTION: 1, SCRIPT: 1, STYLE: 1, SVG: 1, PATH: 1, IMG: 1, CODE: 1, PRE: 1 };
   var INLINE_EDIT_SINGLE_LINE = { H1: 1, H2: 1, H3: 1, H4: 1, H5: 1, H6: 1, BUTTON: 1, A: 1, LABEL: 1, SUMMARY: 1 };
 
@@ -164,13 +169,24 @@
   }
 
   // ---- message bridge ----
+  function isEditorOrigin(o){
+    return typeof o === 'string' && (EDITOR_ORIGINS.indexOf(o) !== -1 || TEAM_PREVIEW_ORIGIN.test(o) || LOCAL_EDITOR_ORIGIN.test(o));
+  }
+
+  function postToEditor(msg){
+    if (!editorOrigin) return;
+    window.parent.postMessage(msg, editorOrigin);
+  }
+
   window.addEventListener('message', function(ev){
+    if (!isEditorOrigin(ev.origin)) return;
     var msg = ev.data;
     if (!msg || typeof msg !== 'object') return;
+    editorOrigin = ev.origin;
     if (msg.type === 'TOGGLE_SELECTOR') setActive(!!msg.payload);
     else if (msg.type === 'SET_ELEMENT_ATTRS') applyAttrs(msg.payload);
     else if (msg.type === 'RESET_INLINE_STYLES') resetInlineStyles(msg.payload);
-    else if (msg.type === 'PICKER_HEALTH_CHECK') replyAlive(msg, ev.source);
+    else if (msg.type === 'PICKER_HEALTH_CHECK') replyAlive(msg, ev.source, ev.origin);
   });
 
   // Revert the iframe DOM after an undo/redo on the parent side. Caller passes
@@ -195,14 +211,14 @@
 
   // Health check: lets PreviewPanel verify the picker is wired before activating
   // design mode. Replies on next microtask so the parent's listener is attached.
-  function replyAlive(msg, source){
+  function replyAlive(msg, source, origin){
     try {
       var target = source || window.parent;
       target.postMessage({
         type: 'PICKER_ALIVE',
         nonce: (msg && msg.nonce) || null,
         version: window.__blinkPickerVersion || '2.1.0',
-      }, '*');
+      }, origin);
     } catch (err) {
       try { console.error('[blink-picker] replyAlive failed', err); } catch (e2) {}
     }
@@ -281,7 +297,7 @@
         updates.push({ id: id, rect: rect });
       }
       if (updates.length === 0) return;
-      window.parent.postMessage({ type: 'ELEMENT_RECT_UPDATE', payload: { updates: updates, viewportWidth: window.innerWidth } }, '*');
+      postToEditor({ type: 'ELEMENT_RECT_UPDATE', payload: { updates: updates, viewportWidth: window.innerWidth } });
     } catch (err) {
       try { console.error('[blink-picker] emitRectUpdates failed', err); } catch (e2) {}
     }
@@ -342,7 +358,7 @@
     // whole picker off here.
     if (inlineEditing) return;
     if (e.key === 'Escape') {
-      try { window.parent.postMessage({ type: 'TOGGLE_PICK_AND_EDIT_REQUESTED' }, '*'); } catch (err) {}
+      try { postToEditor({ type: 'TOGGLE_PICK_AND_EDIT_REQUESTED' }); } catch (err) {}
     }
   }, true);
 
@@ -408,7 +424,7 @@
         modifiers: modifiers || { meta: false, shift: false },
       };
       if (fiberSource) payload.fiberSource = fiberSource;
-      window.parent.postMessage({ type: 'ELEMENT_CLICKED', payload: payload }, '*');
+      postToEditor({ type: 'ELEMENT_CLICKED', payload: payload });
       // Start tracking this element's rect so scroll/resize keeps the parent
       // UI (outline, pill, popup anchor, prompt chip) glued to the element.
       trackSelectedId(id);
@@ -669,7 +685,7 @@
         fiberSource: getFiberSource(el),
       };
       if (extras) { for (var k in extras) if (Object.prototype.hasOwnProperty.call(extras, k)) payload[k] = extras[k]; }
-      window.parent.postMessage({ type: type, payload: payload }, '*');
+      postToEditor({ type: type, payload: payload });
     } catch (err) {
       try { console.error('[blink-picker] postInlineEditMessage failed', err); } catch (e2) {}
     }
