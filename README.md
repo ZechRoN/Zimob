@@ -26,6 +26,8 @@ Em Supabase > Authentication > URL Configuration, defina a URL pública do front
 
 `npm run build` gera `dist`. Hospede esse diretório em um serviço de frontend com fallback de rotas para `index.html`. O repositório inclui configurações para Vercel e Netlify. Configure as duas variáveis públicas de `.env.example` no provedor antes de compilar. GitHub guarda o código e Supabase executa o backend; o frontend precisa de hospedagem própria.
 
+Destino escolhido: **https://zimob.zivello.com.br**, na HostGator. Envie o conteúdo de `dist` (incluindo `.htaccess`) à pasta raiz desse subdomínio no cPanel. O `.htaccess` preserva arquivos estáticos e direciona as rotas do aplicativo para `index.html`. Habilite HTTPS válido antes do primeiro login público. Não envie `.env.local`, fontes ou `node_modules` à pasta pública.
+
 ## Módulos
 
 Imóveis/fotos/vitrine, leads/funil, propostas, visitas/agendamento público, equipe, financeiro, comissões e relatórios. Imagens de divulgação em `logos` e `property-photos` são públicas; escrita limitada por imobiliária e papel. Não use esses buckets para documentos privados.
