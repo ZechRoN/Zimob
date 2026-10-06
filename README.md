@@ -1,35 +1,44 @@
-# ImobFlow — sua cópia na Blink
+# Zimob
 
-1. Abra o link do template e clique em **Remixar projeto**. Entre ou crie sua conta Blink.
-2. Aguarde a cópia. Cole o comando abaixo na conversa da sua cópia, trocando apenas o email.
-3. Depois da ativação, abra **Entrar ou criar minha conta** no aplicativo e use o mesmo email. A conta do aplicativo é separada da conta do editor. Verifique o email se a tela solicitar.
-4. No painel Master, crie sua primeira imobiliária. Use **Abrir imobiliária** para cadastrar imóveis, equipe, leads e suas visitas. Em Configurações, personalize a marca e copie o endereço da vitrine.
+Gestão imobiliária com React/Vite e Supabase. O código pertence ao repositório ZechRoN/Zimob. Login, banco, permissões e arquivos funcionam no Supabase; não há dependência da Blink para executar ou publicar.
 
-## Comando para colar
+## Executar
 
-> Ative esta cópia do ImobFlow seguindo BLINK_ALUNOS.md. Meu email de administrador é SEU_EMAIL_AQUI. Preserve as telas e funções existentes. Configure login, banco e backend desta cópia. Se o plano bloquear o backend, explique e aguarde minha decisão. Entregue o link de acesso e os próximos cliques.
+Use Node.js 22 ou superior.
 
-## O que esperar
+1. `npm ci`
+2. Copie `.env.example` para `.env.local` e informe a chave **publicável** do projeto Supabase. Nunca use service_role/secret no frontend.
+3. `npm run dev` e abra `http://localhost:3000`.
 
-Você pode abrir o template e iniciar o Remix antes de decidir pelo plano. O funcionamento de login, banco e backend depende de um plano Blink que habilite backend; nesta instalação foi usado Pro. A Blink pode cobrar créditos para executar o comando. Não prometa gratuidade ou assinatura obrigatória para simplesmente abrir e copiar.
+## Banco
 
-A base inclui imóveis, fotos e vitrine pública, CRM com funil, propostas, visitas, equipe, receitas, custos, comissões e sugestões por regras. Começa sem clientes reais. A demonstração usa somente dados fictícios. As sugestões do AI Growth usam os registros da imobiliária, sem modelo de IA ou custo de API.
+Projeto indicado: `kfobwttzodrmfuutuxhk`.
 
-WhatsApp é aberto manualmente por link. Emails de convite, notificações e cobranças automáticas não estão integrados. Os planos, valores comerciais e limites exibidos são exemplos para personalizar. Nenhum pagamento é processado pelo template. Receitas e comissões são lançadas manualmente; o saldo previsto desconta custos e comissões registrados, inclusive pendentes; aceitar uma proposta não registra o valor do imóvel como receita da imobiliária.
+As migrações em `supabase/migrations` são ordenadas por nome. A primeira prepara o schema; a segunda adiciona funções, validações e políticas de Storage. Aplique uma única vez em banco novo, dentro de transação. Em um banco existente, inspecione schema e histórico antes de aplicar; não execute a base cegamente nem apague dados para compatibilizar.
 
-O acesso à prévia Blink pode exigir login no editor. Uma vitrine aberta para visitantes externos precisa de publicação/hospedagem Blink e eventualmente domínio, conforme as condições da plataforma. O template não ativa hospedagem paga automaticamente. Metadados dinâmicos são do aplicativo SPA; prévias sociais indexadas podem exigir renderização no servidor.
+A conta Master é o email confirmado configurado em `app_config.super_admin_emails`. Nesta instalação, o email herdado da configuração do projeto é `contato@zivello.com.br`. Nenhum primeiro visitante recebe privilégios automaticamente.
 
-## Instruções técnicas para a Blink executar
+O Master cadastra a imobiliária e autoriza o email do titular. Use **Abrir imobiliária** para selecionar o contexto. O titular e os corretores criam sua própria conta e confirmam o email; o vínculo é realizado no primeiro acesso. Convites de equipe são autorizações por email; compartilhe o endereço de entrada manualmente.
 
-- Preserve a interface e a lógica; não recrie do zero. Use `npm install` e depois `npm run typecheck`, `npm test`, `npm run build:backend` e `npm run build`.
-- Este projeto usa React/Vite/TanStack Router, SDK Blink e Hono em `server/index.ts`. Não requer Supabase, Lovable, Resend ou chaves de terceiros para os módulos centrais.
-- Use o ID **desta nova cópia**, a chave pública desta cópia e backend próprio. Configure `VITE_BLINK_PROJECT_ID`, `VITE_BLINK_PUBLISHABLE_KEY` e `VITE_BLINK_BACKEND_URL=https://<últimos 8 caracteres do ID>.backend.blink.new`. Nunca reutilize banco/URL da origem.
-- Configure no ambiente do backend `OWNER_PROJECT_ID=<ID desta cópia>` e `OWNER_EMAIL=<email informado pelo aluno>`. Remova `OWNER_USER_ID` herdado se houver. `BLINK_PROJECT_ID` e `BLINK_SECRET_KEY` pertencem ao runtime Blink. Não exponha secret no frontend.
-- Não mantenha usuários, proprietários, leads, fotos ou dados da origem. No Remix limpo, o banco recebe o schema e configurações. Caso tenha copiado dados de alguma versão antiga, não os use como base de clientes; peça revisão antes de apagar registros reais.
-- Antes do primeiro health, inicialize o banco desta cópia pelo painel Database ou pelo CLI oficial com `BLINK_ACTIVE_PROJECT=<ID_DESTA_COPIA> blink db query "SELECT 1 AS health"`. Se o health responder `Database not found`, faça essa inicialização e tente novamente, sem recriar o sistema. Se faltar a chave de runtime, use a chave secreta nativa gerada para este projeto no backend; nunca a chave de outro projeto nem a exponha no frontend.
-- Publique somente `backend/index.ts`, gerado por `npm run build:backend`, como backend Hono. O primeiro `/health` inicializa as tabelas via batch e triggers inteiros. Não divida triggers em comandos separados pelo `;`.
-- Aplique `scripts/native/security-policy.json` às tabelas Blink. O acesso público ao SDK de banco é negado; a aplicação usa o backend, que valida identidade, papel e imobiliária. O storage exige autenticação; upload de logo/foto usa caminho exclusivo de usuário.
-- A identidade Master é vinculada ao email verificado e ID deste projeto. Nunca dê Master ao primeiro visitante. Login no editor não autentica automaticamente no aplicativo.
-- Compile, abra a prévia, teste `/health`, login e bootstrap. Salve uma versão do código no editor Blink. Deploy do diretório dist sozinho não deixa o código clonável.
-- Uma imobiliária e sua equipe recebem acesso por email verificado no login Blink. Não crie senha fictícia ou diga que enviou convite automaticamente. O administrador compartilha o link e email autorizado.
-- Testes automatizados cobrem isolamento, dados públicos, vínculo entre lead/imóvel/imobiliária, reserva atômica, conflito de horário e valores financeiros. O Remix em outra conta e login real completo do administrador ainda precisam de validação nesta cópia.
+## Autenticação e publicação
+
+Em Supabase > Authentication > URL Configuration, defina a URL pública do frontend e permita os redirecionamentos `/entrar` e `/reset-senha`, além dos equivalentes em localhost durante desenvolvimento. Mantenha confirmação de email habilitada e configure SMTP para entrega de emails de autenticação em produção.
+
+`npm run build` gera `dist`. Hospede esse diretório em um serviço de frontend com fallback de rotas para `index.html`. O repositório inclui configurações para Vercel e Netlify. Configure as duas variáveis públicas de `.env.example` no provedor antes de compilar. GitHub guarda o código e Supabase executa o backend; o frontend precisa de hospedagem própria.
+
+Destino escolhido: **https://zimob.zivello.com.br**, na HostGator. Envie o conteúdo de `dist` (incluindo `.htaccess`) à pasta raiz desse subdomínio no cPanel. O `.htaccess` preserva arquivos estáticos e direciona as rotas do aplicativo para `index.html`. Habilite HTTPS válido antes do primeiro login público. Não envie `.env.local`, fontes ou `node_modules` à pasta pública.
+
+## Módulos
+
+Imóveis/fotos/vitrine, leads/funil, propostas, visitas/agendamento público, equipe, financeiro, comissões e relatórios. Imagens de divulgação em `logos` e `property-photos` são públicas; escrita limitada por imobiliária e papel. Não use esses buckets para documentos privados.
+
+WhatsApp abre links manuais; notificações comerciais e cobrança automática não estão integradas. Planos/limites são ilustrativos. AI Growth calcula sugestões por regras; não chama modelos de IA. Aceitar uma proposta não lança receita automaticamente: registre receita e comissão separadamente.
+
+## Validação
+
+- `npm run typecheck`
+- `npm run lint`
+- `npm test`: testes PostgreSQL das migrações e testes de domínio legados preservados como referência durante a migração.
+- `npm run build`
+
+O workflow GitHub Actions executa essas verificações. Os arquivos de domínio SQLite em `server/native` e seus fixtures em `scripts/native` são usados apenas pelos testes de regressão legados, sem backend executável nem conexão com a plataforma anterior.

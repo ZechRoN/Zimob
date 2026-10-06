@@ -26,14 +26,14 @@ function Page() {
   const team = useQuery({ queryKey: ["team", cu?.company?.id], enabled: !!cu?.company?.id,
     queryFn: async () => {
       const [members, leads, props] = await Promise.all([
-        supabase.from("company_user").select("*").order("created_at", { ascending: false }),
-        supabase.from("lead").select("id,assigned_to,status"),
-        supabase.from("proposal").select("id,corretor_id,status"),
+        supabase.from("company_user").select("*").eq("company_id", cu!.company.id).order("created_at", { ascending: false }),
+        supabase.from("lead").select("id,assigned_to,status").eq("company_id", cu!.company.id),
+        supabase.from("proposal").select("id,corretor_id,status").eq("company_id", cu!.company.id),
       ]);
       return (members.data ?? []).map((m: any) => ({
         ...m,
-        leads_count: (leads.data ?? []).filter((l: any) => l.assigned_to === m.user_id).length,
-        closings: (props.data ?? []).filter((p: any) => p.corretor_id === m.user_id && p.status === "aceita").length,
+        leads_count: (leads.data ?? []).filter((l: any) => l.assigned_to === m.id).length,
+        closings: (props.data ?? []).filter((p: any) => p.corretor_id === m.id && p.status === "aceita").length,
       }));
     },
   });

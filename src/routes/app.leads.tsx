@@ -1,3 +1,4 @@
+import { leadInterest } from '@/lib/domain-input';
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -52,14 +53,14 @@ function Leads() {
 
   const q = useQuery({
     queryKey: ["leads", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("lead").select("*").order("created_at", { ascending: false }); return data ?? []; },
+    queryFn: async () => { const { data } = await supabase.from("lead").select("*").eq("company_id", cu!.company.id).order("created_at", { ascending: false }); return data ?? []; },
   });
 
   const create = useMutation({
     mutationFn: async (f: any) => {
       const { error } = await supabase.from("lead").insert({
         company_id: cu!.company.id, name: f.name, phone: f.phone, email: f.email,
-        source: f.source || "site", interest_type: f.interest_type || null, notes: f.notes || null,
+        source: f.source || "site", interest_type: leadInterest(f.interest_type) || null, notes: f.notes || null,
         budget_max: f.budget_max ? Number(f.budget_max) : null,
       });
       if (error) throw error;
@@ -68,7 +69,7 @@ function Leads() {
     onError: (e: any) => toast.error(e.message),
   });
 
-  const team=useQuery({queryKey:['lead-team',cu?.company?.id],enabled:!!cu?.company?.id,queryFn:async()=>(await supabase.from('company_user').select('id,nome')).data||[]});
+  const team=useQuery({queryKey:['lead-team',cu?.company?.id],enabled:!!cu?.company?.id,queryFn:async()=>(await supabase.from('company_user').select('id,nome').eq("company_id", cu!.company.id)).data||[]});
   const all = q.data ?? [];
   const counts = useMemo(() => {
     const c: Record<string, number> = { todos: all.length, quentes: 0 };

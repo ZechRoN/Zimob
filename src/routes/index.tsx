@@ -218,7 +218,7 @@ function Landing() {
               <ol className="space-y-4">
                 {[
                   ["1","Você recebe o sistema pronto","Multi-empresa, AI, vitrine — tudo configurado."],
-                  ["2","Remixe na sua conta Blink","O código é seu, hospedado onde quiser."],
+                  ["2","Use com Supabase e GitHub","O código é seu, hospedado onde quiser."],
                   ["3","Personaliza a sua marca","Cor, logo, domínio. Vira o seu produto."],
                   ["4","Começa a vender para imobiliárias","R$197 a R$697/mês recorrente por cliente."],
                 ].map(([n,t,d]) => (

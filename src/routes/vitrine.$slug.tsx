@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 
 import { z } from "zod";
-import { callBackend } from "@/blink/backend";
+import { callBackend } from "@/integrations/supabase/api";
 
 import { PropertyCard } from "@/components/property-card";
 import { Building2 } from "lucide-react";

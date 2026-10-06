@@ -24,14 +24,14 @@ function Imoveis() {
     queryKey: ["imoveis", cu?.company?.id],
     enabled: !!cu?.company?.id,
     queryFn: async () => {
-      const { data, error } = await supabase.from("property").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("property").select("*").eq("company_id", cu!.company.id).order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
   });
   const create = useMutation({
     mutationFn: async (f: any) => {
-      let photos=editing?.photos||[];if(photo){const path=crypto.randomUUID();const up=await supabase.storage.from('property-photos').upload(path,photo);if(up.error)throw up.error;photos=[...photos,supabase.storage.from('property-photos').getPublicUrl(path).data.publicUrl]}
+      let photos=editing?.photos||[];if(photo){const path=cu!.company.id+"/"+crypto.randomUUID();const up=await supabase.storage.from('property-photos').upload(path,photo);if(up.error)throw up.error;photos=[...photos,supabase.storage.from('property-photos').getPublicUrl(path).data.publicUrl]}
       const payload={
         company_id: cu!.company.id, title: f.title, price: Number(f.price), type: f.type, transaction: f.transaction,
         photos,status:f.status||"disponivel",description:f.description,city: f.city, neighborhood: f.neighborhood, bedrooms: Number(f.bedrooms || 0), bathrooms: Number(f.bathrooms || 0),

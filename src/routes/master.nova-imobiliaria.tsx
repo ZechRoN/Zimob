@@ -40,7 +40,7 @@ function Page() {
     setLoading(true);
     try {
       const r: any = await fn({ data: {...form,slug:form.slug||undefined} });
-      setCreds({ name: form.name, slug: r.slug, email: r.email, password: "" });
+      setCreds({ name: form.name, slug: r.slug, email: r.owner_email, password: "" });
     } catch (e: any) { toast.error(e.message); }
     finally { setLoading(false); }
   };

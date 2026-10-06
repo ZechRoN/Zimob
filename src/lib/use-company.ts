@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { callBackend } from "@/blink/backend";
+import { callBackend } from "@/integrations/supabase/api";
 import { useAuth } from "@/hooks/use-auth";
 
 export function useCompany() {
