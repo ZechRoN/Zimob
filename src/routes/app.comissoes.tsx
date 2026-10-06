@@ -19,14 +19,15 @@ function Page() {
   const { data: cu } = useCurrentUser();
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["coms", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("commission").select("*").order("date", { ascending: false }); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("commission").select("*").eq("company_id", cu!.company.id).order("date", { ascending: false }); return data ?? []; } });
   const team = useQuery({ queryKey: ["team-mini", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("company_user").select("id,nome,user_id"); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("company_user").select("id,nome,user_id").eq("company_id", cu!.company.id); return data ?? []; } });
   const m = useMutation({
     mutationFn: async (f: any) => {
       const c = (team.data ?? []).find((t: any) => t.id === f.corretor_id);
+      if (!c) throw new Error("Selecione um corretor");
       const { error } = await supabase.from("commission").insert({
-        company_id: cu!.company.id, corretor_id: c?.id, corretor_nome: c?.nome ?? f.corretor_nome,
+        company_id: cu!.company.id, corretor_id: c!.id, corretor_nome: c?.nome ?? f.corretor_nome,
         value: Number(f.value), percentage: Number(f.percentage || 0), date: f.date, notes: f.notes,
       });
       if (error) throw error;
@@ -57,7 +58,7 @@ function Page() {
     } />
     <div className="bg-card rounded-md border"><Table>
       <TableHeader><TableRow><TableHead>Data</TableHead><TableHead>Corretor</TableHead><TableHead>Valor</TableHead><TableHead>%</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
-      <TableBody>{(q.data ?? []).map((c: any) => (<TableRow key={c.id}><TableCell>{dateBR(c.date)}</TableCell><TableCell>{c.corretor_nome}</TableCell><TableCell>{brl(c.value)}</TableCell><TableCell>{c.percentage}%</TableCell><TableCell><select aria-label="Pagamento da comissão" value={c.payment_status} className="border rounded p-1 bg-background" onChange={async e=>{const r=await supabase.from('commission').update({payment_status:e.target.value}).eq('id',c.id);if(r.error)toast.error(r.error.message);else qc.invalidateQueries({queryKey:['coms']})}}><option value="pendente">Pendente</option><option value="pago">Pago</option></select></TableCell></TableRow>))}
+      <TableBody>{(q.data ?? []).map((c: any) => (<TableRow key={c.id}><TableCell>{dateBR(c.date)}</TableCell><TableCell>{c.corretor_nome}</TableCell><TableCell>{brl(c.value)}</TableCell><TableCell>{c.percentage}%</TableCell><TableCell><select aria-label="Pagamento da comissão" value={c.payment_status} className="border rounded p-1 bg-background" onChange={async e=>{const r=await supabase.from('commission').update({payment_status:e.target.value as "pendente" | "pago"}).eq('id',c.id);if(r.error)toast.error(r.error.message);else qc.invalidateQueries({queryKey:['coms']})}}><option value="pendente">Pendente</option><option value="pago">Pago</option></select></TableCell></TableRow>))}
         {!q.data?.length && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Nenhuma comissão</TableCell></TableRow>}
       </TableBody>
     </Table></div>

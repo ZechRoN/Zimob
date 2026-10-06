@@ -1,5 +1,6 @@
+import { companyAccess } from '@/lib/domain-input';
 import { useQuery } from "@tanstack/react-query";
-import { callBackend } from "@/blink/backend";
+import { callBackend } from "@/integrations/supabase/api";
 import { useAuth } from "@/hooks/use-auth";
 
 export type CurrentUserData = {
@@ -16,17 +17,12 @@ export type CurrentUserData = {
 export function useCurrentUser() {
   const { user, loading: authLoading } = useAuth();
   const q = useQuery({
-    queryKey: ["current-user", user?.id],
+    queryKey: ["current-user", user?.id, window.location.pathname.startsWith('/app') ? sessionStorage.getItem('imob-company') : null],
     enabled: !!user,
     queryFn: async (): Promise<CurrentUserData> => {
       const r=await callBackend('/api/bootstrap');
       const company=r.company,isSuperAdmin=r.isSuperAdmin,globalRoles=isSuperAdmin?['super_admin']:[];
-      let trialDaysLeft: number | null = null;
-      if (company?.trial_ate) {
-        const diff = Math.ceil((new Date(company.trial_ate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-        trialDaysLeft = diff;
-      }
-      const isSuspended = ["blocked","canceled"].includes(company?.status) || (company?.status==="trial" && trialDaysLeft!==null && trialDaysLeft<0);
+      const { trialDaysLeft, isSuspended } = companyAccess(company);
       return {
         userId: user!.id,
         email: user!.email!,

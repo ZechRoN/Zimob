@@ -1,7 +1,47 @@
-import{createFileRoute,Link,useNavigate}from'@tanstack/react-router';
-import{useCurrentUser}from'@/hooks/use-current-user';import{useEffect,useState}from'react';import{useAuth}from'@/hooks/use-auth';import{blink}from'@/blink/client';import{callBackend}from'@/blink/backend';import{Button}from'@/components/ui/button';import{Card,CardContent,CardHeader,CardTitle}from'@/components/ui/card';import{Activity,Loader2}from'lucide-react';import{toast}from'sonner';
-export const Route=createFileRoute('/entrar')({component:Page});
-function Page(){const{session,loading:authLoading}=useAuth();const{data:u,loading:userLoading}=useCurrentUser();const loading=authLoading||userLoading,isSuperAdmin=u?.isSuperAdmin,clinicaId=u?.company?.id;const nav=useNavigate();const[busy,setBusy]=useState(false);const[error,setError]=useState('');
-useEffect(()=>{callBackend('/api/bootstrap').then(r=>{if(!r.configured)setError('Finalize a instalação da sua cópia com o prompt do guia antes de entrar.')}).catch(e=>setError(e.message))},[]);
-useEffect(()=>{if(loading||!session)return;nav({to:isSuperAdmin?'/master/painel':clinicaId?'/app/dashboard':'/app/onboarding'})},[session,isSuperAdmin,clinicaId,loading]);
-return <div className="min-h-screen grid place-items-center bg-gradient-to-br from-primary/5 via-background to-accent/20 p-4"><Card className="w-full max-w-md"><CardHeader className="text-center"><Activity className="size-12 mx-auto text-primary"/><CardTitle>ImobFlow AI</CardTitle></CardHeader><CardContent className="space-y-5"><p className="text-sm text-muted-foreground text-center">Acesse sua imobiliária com uma conta segura. O email cadastrado pela imobiliária libera seu acesso automaticamente após a verificação.</p>{error&&<p role="alert" className="text-sm text-amber-700 bg-amber-50 border rounded p-3">{error}</p>}<Button className="w-full" disabled={busy||!!error} onClick={async()=>{setBusy(true);try{await blink.auth.login(window.location.origin+'/entrar')}catch(e:any){toast.error(e.message);setBusy(false)}}}>{busy&&<Loader2 className="size-4 animate-spin mr-2"/>}Entrar ou criar minha conta</Button><p className="text-xs text-muted-foreground">Use o mesmo email autorizado para administrar o sistema. Senha e recuperação são gerenciadas na tela de acesso.</p><Link to="/demo/dashboard" className="block text-sm text-center text-primary">Ver demonstração sem cadastro →</Link></CardContent></Card></div>}
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/hooks/use-auth'
+import { useCurrentUser } from '@/hooks/use-current-user'
+import { supabase } from '@/integrations/supabase/client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+export const Route = createFileRoute('/entrar')({ component: Page })
+function Page() {
+  const { user } = useAuth(), current = useCurrentUser(), navigate = useNavigate()
+  const [signup, setSignup] = useState(false), [busy, setBusy] = useState(false)
+  const [message, setMessage] = useState(''), [error, setError] = useState('')
+  useEffect(() => {
+    if (user && current.data) navigate({ to: current.data.isSuperAdmin ? '/master/painel' : current.data.company ? '/app/dashboard' : '/app/onboarding' })
+  }, [user, current.data, navigate])
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setBusy(true); setError(''); setMessage('')
+    const form = new FormData(event.currentTarget)
+    const email = String(form.get('email')).trim(), password = String(form.get('password'))
+    try {
+      const result = signup ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + '/entrar' } })
+        : await supabase.auth.signInWithPassword({ email, password })
+      if (result.error) throw result.error
+      if (signup && !result.data.session) setMessage('Verifique seu email e confirme o cadastro antes de entrar.')
+    } catch (e) { setError(e instanceof Error ? e.message : 'Não foi possível entrar') }
+    finally { setBusy(false) }
+  }
+  return <div className="min-h-screen grid place-items-center bg-background p-4"><Card className="w-full max-w-md">
+    <CardHeader><CardTitle>Zimob · {signup ? 'Criar conta' : 'Entrar'}</CardTitle></CardHeader>
+    <CardContent className="space-y-4">
+      <p className="text-sm text-muted-foreground">Use o email autorizado pela sua imobiliária.</p>
+      <form onSubmit={submit} className="space-y-4">
+        <div><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" autoComplete="email" required /></div>
+        <div><Label htmlFor="password">Senha</Label><Input id="password" name="password" type="password" autoComplete={signup ? 'new-password' : 'current-password'} minLength={8} required /></div>
+        {(error || current.error) && <p role="alert" className="text-sm text-destructive">{error || current.error?.message}</p>}
+        {message && <p role="status" className="text-sm">{message}</p>}
+        <Button className="w-full" disabled={busy}>{busy ? 'Aguarde...' : signup ? 'Criar conta' : 'Entrar'}</Button>
+      </form>
+      {current.error && <Button variant="outline" onClick={()=>current.refetch()}>Tentar carregar acesso novamente</Button>}
+      <Button variant="ghost" className="w-full" onClick={()=>{setSignup(!signup);setError('');setMessage('')}}>{signup ? 'Já tenho conta' : 'Criar minha conta'}</Button>
+      <Link className="block text-sm text-primary" to="/esqueci-senha">Esqueci minha senha</Link>
+      <Link className="block text-sm text-primary" to="/demo/dashboard">Ver demonstração</Link>
+    </CardContent>
+  </Card></div>
+}

@@ -53,9 +53,9 @@ function ChartCard({ title, children, className = "" }: { title: string; childre
 function Page() {
   const { data: cu } = useCurrentUser();
   const cid = cu?.company?.id;
-  const leads = useQuery({ queryKey: ["rep-leads", cid], enabled: !!cid, queryFn: async () => (await supabase.from("lead").select("status,source,created_at,neighborhoods")).data ?? [] });
-  const props = useQuery({ queryKey: ["rep-props", cid], enabled: !!cid, queryFn: async () => (await supabase.from("property").select("id,status")).data ?? [] });
-  const revs = useQuery({ queryKey: ["rep-revs", cid], enabled: !!cid, queryFn: async () => (await supabase.from("revenue").select("amount,date")).data ?? [] });
+  const leads = useQuery({ queryKey: ["rep-leads", cid], enabled: !!cid, queryFn: async () => (await supabase.from("lead").select("status,source,created_at,neighborhoods").eq("company_id", cu!.company.id)).data ?? [] });
+  const props = useQuery({ queryKey: ["rep-props", cid], enabled: !!cid, queryFn: async () => (await supabase.from("property").select("id,status").eq("company_id", cu!.company.id)).data ?? [] });
+  const revs = useQuery({ queryKey: ["rep-revs", cid], enabled: !!cid, queryFn: async () => (await supabase.from("revenue").select("amount,date").eq("company_id", cu!.company.id)).data ?? [] });
 
   const statusOrder = ["novo", "em_atendimento", "qualificado", "visita_marcada", "proposta", "fechado", "perdido"];
   const funnel = statusOrder.map(s => ({ status: s, total: (leads.data ?? []).filter((l: any) => l.status === s).length }));
@@ -75,7 +75,7 @@ function Page() {
   const ganhos = (leads.data ?? []).filter((l: any) => l.status === "fechado").length;
   const conv = totalLeads ? Math.round((ganhos / totalLeads) * 100) : 0;
   const totalRev = (revs.data ?? []).reduce((s:number, r: any) => s + Number(r.amount), 0);
-  const extra=useQuery({queryKey:['rep-team',cid],enabled:!!cid,queryFn:async()=>{const [team,proposals,commissions]=await Promise.all(['company_user','proposal','commission'].map(t=>supabase.from(t).select('*')));return{team:team.data||[],proposals:proposals.data||[],commissions:commissions.data||[]}}});
+  const extra=useQuery({queryKey:['rep-team',cid],enabled:!!cid,queryFn:async()=>{const [team,proposals,commissions]=await Promise.all((['company_user','proposal','commission'] as const).map(t=>supabase.from(t).select('*').eq("company_id", cu!.company.id)));return{team:team.data||[],proposals:proposals.data||[],commissions:commissions.data||[]}}});
   const brokerChart=(extra.data?.team||[]).map((b:any)=>({name:b.nome||b.email,vendas:(extra.data?.proposals||[]).filter((x:any)=>x.corretor_id===b.id&&x.status==='aceita').length,comissao:(extra.data?.commissions||[]).filter((x:any)=>x.corretor_id===b.id).reduce((sum:number,x:any)=>sum+Number(x.value),0)}));
   const demand:Record<string,number>={};(leads.data||[]).forEach((x:any)=>(x.neighborhoods||[]).forEach((name:string)=>{demand[name]=(demand[name]||0)+1}));const neighborhoodDemand=Object.entries(demand).map(([name,value])=>({name,value}));
   const PIE = ["#3B82F6", "#2563EB", "#1D4ED8", "#5C7A8F", "#2C5F7A", "var(--app-text-muted)"];

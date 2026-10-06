@@ -1,3 +1,4 @@
+import { visitInstant } from '@/lib/domain-input';
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,7 +45,7 @@ function Pipeline() {
 
   const q = useQuery({
     queryKey: ["pipeline", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("lead").select("*").order("created_at", { ascending: false }); return data ?? []; },
+    queryFn: async () => { const { data } = await supabase.from("lead").select("*").eq("company_id", cu!.company.id).order("created_at", { ascending: false }); return data ?? []; },
   });
 
   const onDragEnd = async (r: DropResult) => {
@@ -160,8 +161,8 @@ function LeadSheet({ leadId, lead, onClose, companyId }: any) {
     queryKey: ["lead-timeline", leadId], enabled: !!leadId,
     queryFn: async () => {
       const [v, p] = await Promise.all([
-        supabase.from("visit").select("*").eq("lead_id", leadId).order("created_at", { ascending: false }),
-        supabase.from("proposal").select("*").eq("lead_id", leadId).order("created_at", { ascending: false }),
+        supabase.from("visit").select("*").eq("company_id", companyId).eq("lead_id", leadId).order("created_at", { ascending: false }),
+        supabase.from("proposal").select("*").eq("company_id", companyId).eq("lead_id", leadId).order("created_at", { ascending: false }),
       ]);
       const items: any[] = [];
       (v.data ?? []).forEach((x:any) => items.push({ kind: "visit", date: x.created_at, label: `Visita ${x.status} em ${dateTimeBR(x.scheduled_at)}` }));
@@ -171,7 +172,7 @@ function LeadSheet({ leadId, lead, onClose, companyId }: any) {
   });
   const properties = useQuery({
     queryKey: ["props-pick", companyId], enabled: !!companyId && !!leadId,
-    queryFn: async () => { const { data } = await supabase.from("property").select("id,title").limit(100); return data ?? []; },
+    queryFn: async () => { const { data } = await supabase.from("property").select("id,title").eq("company_id", companyId).limit(100); return data ?? []; },
   });
   const closeAll = () => { setTab("info"); onClose(); };
   const markLost = async (reason: string) => {
@@ -182,7 +183,7 @@ function LeadSheet({ leadId, lead, onClose, companyId }: any) {
     const prop = properties.data?.find((p: any) => p.id === form.property_id);
     const { error } = await supabase.from("visit").insert({
       company_id: companyId, lead_id: leadId, lead_name: lead?.name, lead_phone: lead?.phone,
-      property_id: form.property_id, property_title: prop?.title, scheduled_at: form.scheduled_at, notes: form.notes,
+      property_id: form.property_id, property_title: prop?.title, scheduled_at: visitInstant(form.scheduled_at), notes: form.notes,
     });
     if (error) toast.error(error.message);
     else { toast.success("Visita criada"); await supabase.from("lead").update({ status: "visita_marcada" }).eq("id", leadId); qc.invalidateQueries({ queryKey: ["pipeline"] }); qc.invalidateQueries({ queryKey: ["lead-timeline", leadId] }); setTab("info"); }
@@ -269,4 +270,3 @@ function LeadSheet({ leadId, lead, onClose, companyId }: any) {
     </Sheet>
   );
 }
-

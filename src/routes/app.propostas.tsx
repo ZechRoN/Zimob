@@ -20,11 +20,11 @@ function Page() {
   const { data: cu } = useCurrentUser();
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["props", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("proposal").select("*").order("created_at", { ascending: false }); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("proposal").select("*").eq("company_id", cu!.company.id).order("created_at", { ascending: false }); return data ?? []; } });
   const leads = useQuery({ queryKey: ["leads-mini", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("lead").select("id,name"); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("lead").select("id,name").eq("company_id", cu!.company.id); return data ?? []; } });
   const props = useQuery({ queryKey: ["props-mini", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("property").select("id,title"); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("property").select("id,title").eq("company_id", cu!.company.id); return data ?? []; } });
   const m = useMutation({
     mutationFn: async (f: any) => {
       const lead = (leads.data ?? []).find((l: any) => l.id === f.lead_id);
@@ -65,7 +65,7 @@ function Page() {
     <div className="bg-card rounded-md border"><Table>
       <TableHeader><TableRow><TableHead>Imóvel</TableHead><TableHead>Lead</TableHead><TableHead>Valor</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
       <TableBody>
-        {(q.data ?? []).map((p: any) => (<TableRow key={p.id}><TableCell>{p.property_title}</TableCell><TableCell>{p.lead_name}</TableCell><TableCell>{brl(p.value)}</TableCell><TableCell><select aria-label="Status da proposta" value={p.status} className="border rounded p-1 bg-background" onChange={async e=>{const r=await supabase.from('proposal').update({status:e.target.value}).eq('id',p.id);if(r.error)toast.error(r.error.message);else{toast.success('Status atualizado. Registre as receitas e comissões separadamente no financeiro.');qc.invalidateQueries({queryKey:['props']})}}}>{['em_analise','aceita','recusada','contra_proposta'].map(st=><option key={st} value={st}>{st.replaceAll('_',' ')}</option>)}</select></TableCell></TableRow>))}
+        {(q.data ?? []).map((p: any) => (<TableRow key={p.id}><TableCell>{p.property_title}</TableCell><TableCell>{p.lead_name}</TableCell><TableCell>{brl(p.value)}</TableCell><TableCell><select aria-label="Status da proposta" value={p.status} className="border rounded p-1 bg-background" onChange={async e=>{const r=await supabase.from('proposal').update({status:e.target.value as "em_analise" | "aceita" | "recusada" | "contra_proposta"}).eq('id',p.id);if(r.error)toast.error(r.error.message);else{toast.success('Status atualizado. Registre as receitas e comissões separadamente no financeiro.');qc.invalidateQueries({queryKey:['props']})}}}>{['em_analise','aceita','recusada','contra_proposta'].map(st=><option key={st} value={st}>{st.replaceAll('_',' ')}</option>)}</select></TableCell></TableRow>))}
         {!q.data?.length && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">Nenhuma proposta</TableCell></TableRow>}
       </TableBody>
     </Table></div>

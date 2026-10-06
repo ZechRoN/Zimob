@@ -751,6 +751,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      zimob_bootstrap: { Args: { input: Json }; Returns: Json }
+      zimob_create_company: { Args: { input: Json }; Returns: Json }
+      zimob_public_api: { Args: { input: Json }; Returns: Json }
       current_company_id: { Args: never; Returns: string }
       has_company_role:
         | {

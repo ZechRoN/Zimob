@@ -25,11 +25,11 @@ function Page() {
   const { data: cu } = useCurrentUser();
   const qc = useQueryClient();
   const costs = useQuery({ queryKey: ["costs", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("operational_cost").select("*").order("date", { ascending: false }); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("operational_cost").select("*").eq("company_id", cu!.company.id).order("date", { ascending: false }); return data ?? []; } });
   const revs = useQuery({ queryKey: ["revs", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("revenue").select("*").order("date", { ascending: false }); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("revenue").select("*").eq("company_id", cu!.company.id).order("date", { ascending: false }); return data ?? []; } });
   const comms = useQuery({ queryKey: ["comm-fin", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("commission").select("*").order("date", { ascending: false }); return data ?? []; } });
+    queryFn: async () => { const { data } = await supabase.from("commission").select("*").eq("company_id", cu!.company.id).order("date", { ascending: false }); return data ?? []; } });
   const addCost = useMutation({
     mutationFn: async (f: any) => {
       const { error } = await supabase.from("operational_cost").insert({ company_id: cu!.company.id, description: f.description, category: f.category, amount: Number(f.amount), date: f.date });

@@ -1,1 +1,3 @@
-import{createFileRoute,Link}from'@tanstack/react-router';export const Route=createFileRoute('/esqueci-senha')({component:()=> <div className="min-h-screen grid place-items-center p-6"><div className="max-w-md text-center space-y-4"><h1 className="text-xl font-bold">Recuperar acesso</h1><p>Na tela de acesso, use a recuperação de senha ou entre com o link enviado ao seu email.</p><Link className="text-primary underline" to="/entrar">Abrir tela de acesso</Link></div></div>});
+import {createFileRoute} from '@tanstack/react-router'
+import {PasswordForm} from '@/components/password-form'
+export const Route=createFileRoute('/esqueci-senha')({component:()=> <PasswordForm recovery />})

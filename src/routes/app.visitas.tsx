@@ -1,3 +1,4 @@
+import { visitInstant } from '@/lib/domain-input';
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,12 +43,12 @@ function Visitas() {
 
   const q = useQuery({
     queryKey: ["visitas", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("visit").select("*").order("scheduled_at"); return data ?? []; },
+    queryFn: async () => { const { data } = await supabase.from("visit").select("*").eq("company_id", cu!.company.id).order("scheduled_at"); return data ?? []; },
   });
 
   const propsQ = useQuery({
     queryKey: ["properties-min", cu?.company?.id], enabled: !!cu?.company?.id,
-    queryFn: async () => { const { data } = await supabase.from("property").select("id,title").eq("company_id", cu!.company.id).order("title"); return data ?? []; },
+    queryFn: async () => { const { data } = await supabase.from("property").select("id,title").eq("company_id", cu!.company.id).eq("company_id", cu!.company.id).order("title"); return data ?? []; },
   });
 
   const m = useMutation({
@@ -56,7 +57,7 @@ function Visitas() {
       if (!prop) throw new Error("Selecione um imóvel");
       const { error } = await supabase.from("visit").insert({
         company_id: cu!.company.id, property_title: prop.title, lead_name: f.lead_name,
-        lead_phone: f.lead_phone, scheduled_at: f.scheduled_at, notes: f.notes,
+        lead_phone: f.lead_phone, scheduled_at: visitInstant(f.scheduled_at), notes: f.notes,
         corretor_nome: f.corretor_nome, property_id: prop.id,
       });
       if (error) throw error;
@@ -209,4 +210,3 @@ function Visitas() {
     </div>
   );
 }
-

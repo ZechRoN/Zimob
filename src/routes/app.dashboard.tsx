@@ -56,13 +56,13 @@ function Dashboard() {
       const since = new Date(Date.now() - 30 * 86400000).toISOString();
       const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
       const [leadsNew, leadsFollow, visits, props, closed, propsActive, team] = await Promise.all([
-        supabase.from("lead").select("id", { count: "exact", head: true }).gte("created_at", since),
-        supabase.from("lead").select("id", { count: "exact", head: true }).in("status", ["em_atendimento", "qualificado"]),
-        supabase.from("visit").select("id", { count: "exact", head: true }).eq("status", "agendada"),
-        supabase.from("proposal").select("id", { count: "exact", head: true }).eq("status", "em_analise"),
-        supabase.from("proposal").select("value").eq("status", "aceita").gte("updated_at", monthStart),
-        supabase.from("property").select("id", { count: "exact", head: true }).eq("status", "disponivel"),
-        supabase.from("company_user").select("id", { count: "exact", head: true }).eq("ativo", true),
+        supabase.from("lead").select("id", { count: "exact", head: true }).eq("company_id", cu!.company.id).gte("created_at", since),
+        supabase.from("lead").select("id", { count: "exact", head: true }).eq("company_id", cu!.company.id).in("status", ["em_atendimento", "qualificado"]),
+        supabase.from("visit").select("id", { count: "exact", head: true }).eq("company_id", cu!.company.id).eq("status", "agendada"),
+        supabase.from("proposal").select("id", { count: "exact", head: true }).eq("company_id", cu!.company.id).eq("status", "em_analise"),
+        supabase.from("proposal").select("value").eq("company_id", cu!.company.id).eq("status", "aceita").gte("updated_at", monthStart),
+        supabase.from("property").select("id", { count: "exact", head: true }).eq("company_id", cu!.company.id).eq("status", "disponivel"),
+        supabase.from("company_user").select("id", { count: "exact", head: true }).eq("company_id", cu!.company.id).eq("ativo", true),
       ]);
       return {
         newLeads: leadsNew.count ?? 0,
@@ -81,9 +81,9 @@ function Dashboard() {
     queryKey: ["dash-activity", companyId], enabled: !!companyId,
     queryFn: async () => {
       const [l, v, p] = await Promise.all([
-        supabase.from("lead").select("name,status,created_at").order("created_at", { ascending: false }).limit(4),
-        supabase.from("visit").select("lead_name,property_title,scheduled_at,status").order("created_at", { ascending: false }).limit(4),
-        supabase.from("proposal").select("lead_name,property_title,value,status,created_at").order("created_at", { ascending: false }).limit(4),
+        supabase.from("lead").select("name,status,created_at").eq("company_id", cu!.company.id).order("created_at", { ascending: false }).limit(4),
+        supabase.from("visit").select("lead_name,property_title,scheduled_at,status").eq("company_id", cu!.company.id).order("created_at", { ascending: false }).limit(4),
+        supabase.from("proposal").select("lead_name,property_title,value,status,created_at").eq("company_id", cu!.company.id).order("created_at", { ascending: false }).limit(4),
       ]);
       const items: { date: string; label: string; kind: string }[] = [];
       (l.data ?? []).forEach((x:any) => items.push({ kind: "lead", date: x.created_at, label: `Novo lead: ${x.name} (${x.status})` }));
@@ -93,7 +93,7 @@ function Dashboard() {
     },
   });
 
-  const chart=useQuery({queryKey:['dash-chart',companyId],enabled:!!companyId,queryFn:async()=>{const [leads,props,proposals]=await Promise.all(['lead','property','proposal'].map(t=>supabase.from(t).select('*')));return{leads:leads.data||[],props:props.data||[],proposals:proposals.data||[]}}});
+  const chart=useQuery({queryKey:['dash-chart',companyId],enabled:!!companyId,queryFn:async()=>{const [leads,props,proposals]=await Promise.all((['lead','property','proposal'] as const).map(t=>supabase.from(t).select('*').eq("company_id", cu!.company.id)));return{leads:leads.data||[],props:props.data||[],proposals:proposals.data||[]}}});
   const days=(v:string)=>(Date.now()-new Date(v).getTime())/86400000;
   const forgotten=(chart.data?.leads||[]).filter((x:any)=>!['fechado','perdido'].includes(x.status)&&days(x.updated_at)>15).map((x:any)=>({...x,suggestion:'Revise o cadastro e faça contato.'}));
   const aiInsights={forgotten_leads:forgotten,stalled_proposals:(chart.data?.proposals||[]).filter((x:any)=>x.status==='em_analise'&&days(x.updated_at)>3)};

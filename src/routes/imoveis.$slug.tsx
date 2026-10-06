@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { callBackend } from "@/blink/backend";
+import { callBackend } from "@/integrations/supabase/api";
 import { Slider } from "@/components/ui/slider";
 import { brl } from "@/lib/format";
 import { Search, Menu, X, Instagram, Facebook, Phone } from "lucide-react";
