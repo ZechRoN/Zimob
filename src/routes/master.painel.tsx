@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/page-header";
 import { KpiCard } from "@/components/kpi-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, TrendingUp, UserPlus, TrendingDown, DollarSign } from "lucide-react";
+import { Building2, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { brl } from "@/lib/format";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from "recharts";
 
@@ -17,7 +17,8 @@ function Page() {
   const q = useQuery({
     queryKey: ["master-painel"],
     queryFn: async () => {
-      const { data } = await supabase.from("company").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("company").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
       const list = data ?? [];
       const active = list.filter((c: any) => c.status === "active");
       const trial = list.filter((c: any) => c.status === "trial");
@@ -66,12 +67,13 @@ function Page() {
 
   const d = q.data;
   return (<div>
-    <PageHeader title="Painel Master" description="Visão global do SaaS" />
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <KpiCard label="Imobiliárias" value={d?.total ?? 0} icon={Building2} hint={`${d?.active ?? 0} ativas · ${d?.trial ?? 0} trial`} />
-      <KpiCard label="MRR" value={brl(d?.mrr ?? 0)} icon={DollarSign} hint="Receita recorrente mensal" />
-      <KpiCard label="ARR" value={brl(d?.arr ?? 0)} icon={TrendingUp} hint="Projeção anual" />
-      <KpiCard label="Churn" value={`${(d?.churnRate ?? 0).toFixed(1)}%`} icon={TrendingDown} hint={`${d?.canceled ?? 0} canceladas`} />
+    <PageHeader title="Visão geral" description="Acompanhe as imobiliárias e a evolução da sua plataforma." />
+    {q.isError && <p role="alert" className="mb-4 rounded-xl border border-destructive/30 p-4 text-sm">Não foi possível carregar os indicadores. <button className="underline" onClick={()=>q.refetch()}>Tentar novamente</button></p>}
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+      <KpiCard label="Imobiliárias" value={d?.total ?? 0} icon={Building2} hint={`${d?.active ?? 0} ativas · ${d?.trial ?? 0} em avaliação`} />
+      <KpiCard label="Receita mensal estimada" value={brl(d?.mrr ?? 0)} icon={DollarSign} hint="Baseada nos planos das contas ativas" />
+      <KpiCard label="Projeção anual" value={brl(d?.arr ?? 0)} icon={TrendingUp} hint="Estimativa mensal × 12" />
+      <KpiCard label="Contas canceladas" value={`${(d?.churnRate ?? 0).toFixed(1)}%`} icon={TrendingDown} hint={`${d?.canceled ?? 0} canceladas`} />
     </div>
 
     <div className="grid lg:grid-cols-3 gap-4 mb-6">
@@ -80,9 +82,9 @@ function Page() {
         <CardContent>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={d?.months ?? []}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="label" /><YAxis />
-              <Tooltip /><Line type="monotone" dataKey="mrr" stroke="hsl(var(--brand))" strokeWidth={2} name="MRR (R$)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="label" stroke="var(--muted-foreground)" fontSize={12} /><YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
+              <Tooltip contentStyle={{ background: "var(--card)", borderColor: "var(--border)", borderRadius: 12, color: "var(--foreground)" }} /><Line type="monotone" dataKey="mrr" stroke="var(--brand)" strokeWidth={2} name="MRR (R$)" />
               <Line type="monotone" dataKey="signups" stroke="#10b981" strokeWidth={2} name="Novos cadastros" />
             </LineChart>
           </ResponsiveContainer>
@@ -93,9 +95,9 @@ function Page() {
         <CardContent>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={d?.planDist ?? []}>
-              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-              <XAxis dataKey="plan" /><YAxis />
-              <Tooltip /><Bar dataKey="n" fill="hsl(var(--brand))" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="plan" stroke="var(--muted-foreground)" fontSize={12} /><YAxis stroke="var(--muted-foreground)" fontSize={12} allowDecimals={false} />
+              <Tooltip contentStyle={{ background: "var(--card)", borderColor: "var(--border)", borderRadius: 12, color: "var(--foreground)" }} /><Bar dataKey="n" fill="var(--brand)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -103,7 +105,7 @@ function Page() {
     </div>
 
     <Card>
-      <CardHeader><CardTitle>Top 5 imobiliárias (MRR)</CardTitle></CardHeader>
+      <CardHeader><CardTitle>Imobiliárias ativas por valor do plano</CardTitle></CardHeader>
       <CardContent>
         {(d?.top ?? []).map((c: any, i: number) => (
           <div key={c.id} className="flex items-center justify-between py-3 border-b last:border-0">

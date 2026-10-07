@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { PublicHeader, PublicFooter } from "./imoveis.$slug";
 
 export const Route = createFileRoute("/agendar-visita/$slug/$id")({
-  head: () => ({ meta: [{ title: "Agendar visita exclusiva — ImobFlow" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Agendar visita exclusiva — Zimob" }, { name: "robots", content: "noindex" }] }),
   component: AgendarLuxe,
 });
 

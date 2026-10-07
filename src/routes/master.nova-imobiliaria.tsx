@@ -36,7 +36,7 @@ function Page() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.ownerEmail) { toast.error("Nome e email do owner são obrigatórios"); return; }
+    if (!form.name || !form.ownerEmail) { toast.error("Nome e email do responsável são obrigatórios"); return; }
     setLoading(true);
     try {
       const r: any = await fn({ data: {...form,slug:form.slug||undefined} });
@@ -63,9 +63,9 @@ function Page() {
           <Field label="WhatsApp"><Input value={form.whatsapp} onChange={(e) => setF("whatsapp", e.target.value)} placeholder="(11) 90000-0000" /></Field>
         </Section>
 
-        <Section title="3. Owner / Admin">
-          <Field label="Nome do owner"><Input value={form.ownerNome} onChange={(e) => setF("ownerNome", e.target.value)} /></Field>
-          <Field label="Email do owner *"><Input type="email" required value={form.ownerEmail} onChange={(e) => setF("ownerEmail", e.target.value)} /></Field>
+        <Section title="3. Responsável pelo acesso">
+          <Field label="Nome do responsável"><Input value={form.ownerNome} onChange={(e) => setF("ownerNome", e.target.value)} /></Field>
+          <Field label="Email do responsável *"><Input type="email" required value={form.ownerEmail} onChange={(e) => setF("ownerEmail", e.target.value)} /></Field>
         </Section>
 
         <Section title="4. Plano">

@@ -142,7 +142,7 @@ function Onboarding() {
         </>)}
         {step === 4 && (<>
           <h2 className="text-lg font-semibold">Tudo pronto!</h2>
-          <p className="text-sm text-muted-foreground">Seu trial de 14 dias está ativo. Bem-vindo ao ImobFlow.</p>
+          <p className="text-sm text-muted-foreground">Seu trial de 14 dias está ativo. Bem-vindo ao Zimob.</p>
           <Button className="bg-brand text-brand-foreground" onClick={() => navigate({ to: "/app/dashboard" })}>Ir para o dashboard</Button>
         </>)}
       </CardContent></Card>

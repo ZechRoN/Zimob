@@ -1,3 +1,4 @@
+import { ZimobBrand } from '@/components/zimob-brand';
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Users, Home, KanbanSquare, Calendar, FileText,
@@ -46,15 +47,7 @@ export function SidebarTenant() {
   return (
     <Sidebar collapsible="icon" className="border-r border-app-border bg-sidebar text-sidebar-foreground">
       <SidebarHeader className="border-b border-app-border bg-sidebar">
-        <div className="flex items-center gap-2.5 px-2 py-2.5">
-          <div className="h-9 w-9 rounded-lg flex items-center justify-center bg-primary text-primary-foreground shadow-sm">
-            <Building2 className="h-4 w-4" />
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span className="font-bold text-sm text-sidebar-foreground tracking-tight">ImobFlow AI</span>
-            <span className="text-[10px] uppercase tracking-[0.16em] text-sidebar-foreground/60">CRM Pro</span>
-          </div>
-        </div>
+        <div className="px-2 py-2.5 group-data-[collapsible=icon]:px-0"><ZimobBrand className="h-10 group-data-[collapsible=icon]:hidden" /><ZimobBrand compact className="hidden h-8 w-6 group-data-[collapsible=icon]:block" /><span className="mt-2 block text-[10px] uppercase tracking-[0.16em] text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">Gestão imobiliária</span></div>
       </SidebarHeader>
       <SidebarContent className="bg-sidebar px-2 py-3">
         {GROUPS.map((g) => (

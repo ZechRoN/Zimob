@@ -4,15 +4,15 @@ type Theme = "light" | "dark";
 type Ctx = { theme: Theme; setTheme: (t: Theme) => void; toggle: () => void };
 
 const ThemeCtx = createContext<Ctx | null>(null);
-const STORAGE_KEY = "imobflow-theme";
+const STORAGE_KEY = "zimob-theme";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-
-  useEffect(() => {
-    const stored = (typeof window !== "undefined" && (localStorage.getItem(STORAGE_KEY) as Theme)) || "light";
-    setThemeState(stored);
-  }, []);
+  const [theme, setThemeState] = useState<Theme>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem('imobflow-theme');
+      return stored === 'dark' ? 'dark' : 'light';
+    } catch { return 'light'; }
+  });
 
   useEffect(() => {
     const root = document.documentElement;

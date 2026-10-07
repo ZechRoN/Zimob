@@ -12,11 +12,17 @@ Validação local: 22 testes aprovados, TypeScript e ESLint aprovados, build de 
 
 O titular criou e confirmou a conta `contato@zivello.com.br`; o painel Master abriu autenticado no ambiente local. O site foi publicado pelo cPanel em `/home1/zivell93/zimob.zivello.com.br`, inicialmente vazio, preservando `.well-known`. Login e recuperação respondem com HTTP 200 no domínio HTTPS e o acesso HTTP redireciona para HTTPS. O pacote publicado contém apenas os arquivos compilados, sem fontes ou credenciais privadas.
 
-Os testes do GitHub passaram após restaurar no lock as dependências opcionais das outras plataformas. Todas as versões já testadas foram preservadas. O login autenticado no domínio público ainda depende da entrada do usuário nessa origem; a sessão local não é transferida.
+Os testes do GitHub passaram após restaurar no lock as dependências opcionais das outras plataformas. Todas as versões já testadas foram preservadas. A migração foi integrada à main pelo PR #1 (2a56f61). O titular também acessou o painel Master no domínio público e cadastrou a imobiliária Casa Própria.
 
 ## Etapas que dependem da operação
 
 - Configurar e validar SMTP para emails de cadastro e recuperação em produção.
-- Cadastrar a imobiliária e seus dados. Não foram importados dados da Blink; esta instalação começou com banco vazio.
+- Completar os dados operacionais da imobiliária. Não foram importados dados da Blink; esta instalação começou com banco vazio.
 
-O runtime, SDK, login, APIs e scripts de interface da Blink foram removidos do aplicativo. A instalação não precisa da Blink para executar. A integração Blink.new ainda aparece nos aplicativos do repositório. Sua configuração exige reautenticação do titular no GitHub; a retirada do acesso está pendente dessa etapa.
+O runtime, SDK, login, APIs e scripts de interface da Blink foram removidos do aplicativo. A instalação não precisa da Blink para executar. Em 7 de outubro de 2026, o titular informou ter desconectado Supabase e GitHub na Blink. A remoção da instalação Blink.new nas permissões do GitHub ainda não foi conferida independentemente. A versão pública foi novamente verificada: HTTP 200, projeto Supabase correto e nenhuma referência a endpoints Blink no bundle principal.
+
+## Identidade visual e administração
+
+Os arquivos originais enviados pelo titular foram copiados para public/brand e public/favicon.png. A identidade Zimob substitui o nome e os ícones antigos nas telas, navegação, vitrine e metadados. Login, cadastro e recuperação compartilham o novo layout. O Master usa cores legíveis, lista com status em português e configurações que explicam as preferências, acessos e integrações disponíveis. O tema foi ligado à raiz da aplicação e preserva a preferência anterior do navegador.
+
+Validação da atualização: login real no ambiente local, lista com a imobiliária existente, temas claro/escuro e menu recolhido conferidos no navegador. O controle de viewport não alterou a largura efetiva; não há validação visual móvel concluída. Revisão independente apontou contraste dos botões escuros e texto sobre atribuição de planos; ambos corrigidos.

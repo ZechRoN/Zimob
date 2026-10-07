@@ -14,7 +14,7 @@ import { PublicHeader, PublicFooter } from "./imoveis.$slug";
 export const Route = createFileRoute("/imovel/$slug/$id")({
   head: ({ params }) => ({
     meta: [
-      { title: "Residência exclusiva — ImobFlow" },
+      { title: "Residência exclusiva — Zimob" },
       { name: "description", content: "Detalhes da residência." },
       { property: "og:url", content: `/imovel/${params.slug}/${params.id}` },
     ],

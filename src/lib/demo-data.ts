@@ -157,7 +157,7 @@ export const demoCommissions = [
 
 export const demoCosts = [
   { id: "co1", description: "Anúncios Google + Meta Ads",   category: "marketing",  amount: 4800,  date: days(2)  },
-  { id: "co2", description: "Plataforma ImobFlow Pro",      category: "plataforma", amount: 199,   date: days(1)  },
+  { id: "co2", description: "Plataforma Zimob Pro",      category: "plataforma", amount: 199,   date: days(1)  },
   { id: "co3", description: "Aluguel escritório Jardins",   category: "escritorio", amount: 8500,  date: days(3)  },
   { id: "co4", description: "Honorários jurídicos",         category: "juridico",   amount: 3200,  date: days(5)  },
   { id: "co5", description: "Folha corretores comissionada",category: "folha",      amount: 24000, date: days(4)  },

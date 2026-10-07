@@ -41,7 +41,7 @@ function Inner() {
             <SidebarTrigger className="text-app-text-muted hover:text-primary" />
             <div className="min-w-0">
               <div className="text-[10px] uppercase tracking-[0.16em] text-app-text-soft">Workspace</div>
-              <div className="font-semibold tracking-tight text-app-text truncate">{data?.company?.name ?? "ImobFlow"}</div>
+              <div className="font-semibold tracking-tight text-app-text truncate">{data?.company?.name ?? "Zimob"}</div>
             </div>
             <div className="hidden md:block flex-1 max-w-md mx-6">
               <div className="relative">

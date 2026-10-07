@@ -1,3 +1,4 @@
+import { ZimobBrand } from '@/components/zimob-brand';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -11,9 +12,9 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ImobFlow AI — CRM imobiliário premium com AI Growth Engine" },
+      { title: "Zimob — CRM imobiliário premium com AI Growth Engine" },
       { name: "description", content: "CRM completo para imobiliárias: vitrine pública, pipeline kanban, gestão de visitas, propostas, financeiro e sugestões por regras para acompanhar oportunidades. 14 dias grátis." },
-      { property: "og:title", content: "ImobFlow AI — CRM imobiliário com AI Growth" },
+      { property: "og:title", content: "Zimob — CRM imobiliário com AI Growth" },
       { property: "og:description", content: "Vitrine + pipeline + AI Growth Engine para imobiliárias modernas." },
       { property: "og:url", content: "/" },
     ],
@@ -96,10 +97,7 @@ function Landing() {
       <header className="sticky top-0 z-50 bg-white/90 border-b border-imob-border backdrop-blur-xl">
         <div className="container mx-auto h-16 px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-imob-accent flex items-center justify-center shadow-md shadow-imob-accent/30">
-              <Home className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="text-imob-text font-bold tracking-tight">ImobFlow <span className="text-imob-accent">AI</span></span>
+            <ZimobBrand className="h-10" />
           </Link>
           <nav className="hidden sm:flex items-center gap-7 text-sm font-medium text-imob-muted">
             <a href="#modulos" className="hover:text-imob-accent transition">Módulos</a>
@@ -161,7 +159,7 @@ function Landing() {
                   <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
                   <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
                 </div>
-                <div className="text-xs text-imob-muted ml-2">ImobFlow AI — Dashboard</div>
+                <div className="text-xs text-imob-muted ml-2">Zimob — Dashboard</div>
               </div>
               <div className="p-5 space-y-4">
                 <div className="grid grid-cols-3 gap-3">
@@ -354,7 +352,7 @@ function Landing() {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-              Por que ImobFlow AI é diferente
+              Por que Zimob é diferente
             </h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
@@ -413,8 +411,7 @@ function Landing() {
           <div className="grid md:grid-cols-4 gap-8 mb-10">
             <div>
               <Link to="/" className="flex items-center gap-2 mb-4">
-                <div className="h-8 w-8 rounded-lg bg-imob-accent flex items-center justify-center"><Home className="h-4 w-4 text-white" /></div>
-                <span className="text-white font-bold">ImobFlow <span className="text-imob-accent">AI</span></span>
+                <ZimobBrand compact /><span className="text-2xl font-bold text-white">Zimob</span>
               </Link>
               <p className="text-xs text-slate-500 leading-relaxed">CRM imobiliário com sugestões por regras, vitrine pública e pipeline visual.</p>
             </div>
@@ -443,7 +440,7 @@ function Landing() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-6 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2">
-            <span>© 2026 ImobFlow AI — Parte do ecossistema TurboSaaS.</span>
+            <span>© 2026 Zimob — Gestão imobiliária.</span>
             <span>Feito para imobiliárias modernas.</span>
           </div>
         </div>

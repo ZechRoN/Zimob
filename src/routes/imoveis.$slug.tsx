@@ -247,7 +247,7 @@ export function PublicFooter({ c }: { c: any }) {
         </div>
       </div>
       <div className="border-t border-white/10 py-6 text-center text-[10px] uppercase tracking-luxe text-[var(--luxe-gold)]/70">
-        © {new Date().getFullYear()} {c.name} · Powered by ImobFlow AI
+        © {new Date().getFullYear()} {c.name} · Powered by Zimob
       </div>
     </footer>
   );

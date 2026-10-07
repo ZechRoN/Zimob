@@ -46,7 +46,7 @@ function DemoLayout() {
           <header className="h-16 flex items-center gap-4 px-5 sticky top-0 z-20 bg-app-bg/85 backdrop-blur-md border-b border-app-border">
             <SidebarTrigger className="text-app-text-muted hover:text-primary" />
             <div className="flex flex-col leading-tight">
-              <span className="text-[10px] uppercase tracking-[0.25em] text-app-text-soft">ImobFlow · Demo</span>
+              <span className="text-[10px] uppercase tracking-[0.25em] text-app-text-soft">Zimob · Demo</span>
               <h1 className="text-lg font-semibold text-app-text tracking-tight">{pageTitle}</h1>
             </div>
 
