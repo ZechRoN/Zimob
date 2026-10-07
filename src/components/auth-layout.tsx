@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { ArrowUpRight, Building2, CalendarDays, UsersRound } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Building2, CalendarDays, UsersRound } from 'lucide-react'
 import { ZimobBrand } from './zimob-brand'
 
 export function AuthLayout({ children }: { children: ReactNode }) {
   return <div className="min-h-svh bg-background lg:grid lg:grid-cols-[1.05fr_1fr]">
     <aside className="relative hidden overflow-hidden bg-[#09172e] p-12 text-white lg:flex lg:flex-col xl:p-16">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_10%_0%,#0c58ab_0%,transparent_65%)]" />
-      <Link to="/" aria-label="Zimob — página inicial" className="relative flex items-center gap-3"><ZimobBrand compact className="h-12 w-11" /><span className="text-3xl font-bold tracking-tight">Zimob</span></Link>
+      <Link to="/" aria-label="Voltar à página inicial" title="Voltar à página inicial" className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-200"><ArrowLeft className="h-5 w-5" /></Link>
       <div className="relative my-auto py-14"><p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-blue-300">Gestão imobiliária, conectada.</p><h2 className="max-w-lg text-4xl font-semibold leading-[1.15] tracking-tight xl:text-5xl">Mais clareza na rotina.<br /><span className="text-blue-300">Mais espaço para crescer.</span></h2><p className="mt-6 max-w-md text-base leading-relaxed text-slate-300">Seus imóveis, clientes e negociações no mesmo lugar. Do primeiro contato à próxima conquista.</p>
         <div className="mt-10 space-y-3">
           {[
