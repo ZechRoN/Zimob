@@ -22,10 +22,9 @@ export function TenantGuard({ children }: { children: ReactNode }) {
   }, [current.data, pathname, navigate]);
   if (current.error) return <div className="p-8 space-y-4"><p role="alert">{current.error.message}</p><button onClick={()=>current.refetch()}>Tentar novamente</button><Link to="/entrar">Voltar para entrada</Link></div>;
   if (authLoading || !user || current.loading) return <Loading />;
-  if (current.data?.isSuspended && !current.data.isSuperAdmin && pathname !== '/app/plano') return <div className="p-8"><p>Acesso suspenso. Entre em contato com o administrador.</p><Link to="/app/plano">Ver plano</Link></div>;
+  if (current.data?.isSuspended && !current.data.isSuperAdmin && !['/app/plano','/app/configuracoes'].includes(pathname)) return <div className="p-8"><p>Acesso suspenso. Entre em contato com o administrador.</p><Link to="/app/plano">Ver plano</Link></div>;
   const restricted = ['/app/financeiro','/app/comissoes','/app/relatorios'].includes(pathname);
   if (restricted && !current.data?.isSuperAdmin && !['owner','admin','financeiro'].includes(current.data?.companyUser?.role)) return <div className="p-8">Seu perfil não tem acesso a este módulo.</div>;
-  if (pathname === '/app/configuracoes' && !current.data?.isSuperAdmin && !['owner','admin'].includes(current.data?.companyUser?.role)) return <div className="p-8">Somente administradores podem alterar as configurações.</div>;
   if (!current.data?.company && pathname !== '/app/onboarding') return <Loading />;
   return <>{children}</>;
 }

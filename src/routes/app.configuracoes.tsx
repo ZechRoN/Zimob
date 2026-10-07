@@ -1,3 +1,4 @@
+import { AccountSecurity } from '@/components/account-security';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/page-header";
@@ -20,14 +21,17 @@ export const Route = createFileRoute("/app/configuracoes")({ component: Config }
 function Config() {
   const { data: cu, refetch } = useCurrentUser();
   if (!cu?.company) return <div className="text-muted-foreground">Carregando...</div>;
+  if (!cu.isSuperAdmin && (cu.isSuspended || !["owner", "admin"].includes(cu.companyUser?.role))) return <div className="space-y-6"><PageHeader title="Minha conta" description="Gerencie a segurança do seu acesso" /><AccountSecurity /></div>;
   return (<div><PageHeader title="Configurações" description="Personalize sua imobiliária" />
     <Tabs defaultValue="empresa">
-      <TabsList className="mb-6">
+      <TabsList className="mb-6 h-auto flex-wrap">
+        <TabsTrigger value="seguranca">Minha conta</TabsTrigger>
         <TabsTrigger value="empresa">Imobiliária</TabsTrigger>
         <TabsTrigger value="equipe">Equipe</TabsTrigger>
         <TabsTrigger value="vitrine">Vitrine</TabsTrigger>
         <TabsTrigger value="notificacoes">Notificações</TabsTrigger>
       </TabsList>
+      <TabsContent value="seguranca"><AccountSecurity /></TabsContent>
       <TabsContent value="empresa"><Empresa cu={cu} refetch={refetch} /></TabsContent>
       <TabsContent value="equipe"><EquipeTab /></TabsContent>
       <TabsContent value="vitrine"><Vitrine cu={cu} refetch={refetch} /></TabsContent>

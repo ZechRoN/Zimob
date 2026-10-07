@@ -122,3 +122,55 @@ test('Supabase: storage permite imagem na própria imobiliária e rejeita outra'
  await assert.rejects(db.query("INSERT INTO storage.objects(bucket_id,name) VALUES('property-photos',$1)",[ids.b+'/photo.jpg']))
  }finally{await db.close()}
 })
+
+test('Supabase: exclusão exige Master, conta desativada e confirmação após 10 segundos', async () => {
+ const db=await fixture(); try {
+  await login(db,ids.master)
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a}), /desativada/)
+  await db.query("UPDATE company SET status='blocked' WHERE id=$1",[ids.a])
+  await login(db,ids.owner)
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a}), /Master/)
+  await login(db,ids.master)
+  await assert.rejects(db.query('DELETE FROM company WHERE id=$1',[ids.a]), /permission denied/)
+  const prepared=await rpc(db,'zimob_delete_company',{companyId:ids.a})
+  assert.ok(prepared.token)
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a,token:prepared.token}), /10 segundos/)
+  await db.exec('RESET ROLE')
+  await db.query("UPDATE private.company_deletion_request SET requested_at=clock_timestamp()-interval '11 seconds' WHERE token=$1",[prepared.token])
+  await login(db,ids.master)
+  await db.query("UPDATE company SET status='active' WHERE id=$1",[ids.a])
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a,token:prepared.token}), /desativada/)
+  await db.query("UPDATE company SET status='canceled' WHERE id=$1",[ids.a])
+  assert.equal((await rpc(db,'zimob_delete_company',{companyId:ids.a,token:prepared.token})).ok,true)
+  assert.equal((await db.query('SELECT * FROM company WHERE id=$1',[ids.a])).rows.length,0)
+  assert.equal((await db.query('SELECT * FROM property WHERE company_id=$1',[ids.a])).rows.length,0)
+  assert.equal((await db.query('SELECT * FROM revenue WHERE company_id=$1',[ids.a])).rows.length,0)
+  assert.equal((await db.query('SELECT * FROM company WHERE id=$1',[ids.b])).rows.length,1)
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a,token:prepared.token}), /encontrada/)
+ } finally { await db.close() }
+})
+
+test('Supabase: exclusão remove dependências e rejeita confirmação vencida ou substituída', async () => {
+ const db=await fixture(); try {
+  await login(db,ids.master)
+  const lead=(await db.query<{id:string}>("INSERT INTO lead(company_id,name,phone) VALUES($1,'Cliente','11999999999') RETURNING id",[ids.a])).rows[0].id
+  const proposal=(await db.query<{id:string}>("INSERT INTO proposal(company_id,lead_id,property_id,value) VALUES($1,$2,$3,100) RETURNING id",[ids.a,lead,ids.pa])).rows[0].id
+  await db.query("INSERT INTO commission(company_id,corretor_id,property_id,proposal_id,value,date) SELECT $1,id,$2,$3,10,current_date FROM company_user WHERE user_id=$4",[ids.a,ids.pa,proposal,ids.broker])
+  await db.query("UPDATE company SET status='canceled' WHERE id=$1",[ids.a])
+  const old=await rpc(db,'zimob_delete_company',{companyId:ids.a})
+  const fresh=await rpc(db,'zimob_delete_company',{companyId:ids.a})
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a,token:old.token}), /inválida/)
+  await db.exec('RESET ROLE')
+  await db.query("UPDATE private.company_deletion_request SET requested_at=clock_timestamp()-interval '6 minutes' WHERE token=$1",[fresh.token])
+  await login(db,ids.master)
+  await assert.rejects(rpc(db,'zimob_delete_company',{companyId:ids.a,token:fresh.token}), /expirada/)
+  await db.exec('RESET ROLE')
+  await db.query("UPDATE private.company_deletion_request SET requested_at=clock_timestamp()-interval '11 seconds' WHERE token=$1",[fresh.token])
+  await login(db,ids.master)
+  assert.equal((await rpc(db,'zimob_delete_company',{companyId:ids.a,token:fresh.token})).ok,true)
+  assert.equal((await db.query('SELECT * FROM commission')).rows.length,0)
+  assert.equal((await db.query('SELECT * FROM proposal')).rows.length,0)
+  await db.exec('RESET ROLE')
+  assert.equal((await db.query('SELECT * FROM auth.users')).rows.length,4)
+ } finally { await db.close() }
+})

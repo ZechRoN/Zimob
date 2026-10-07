@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Building2, ShieldCheck, Mail, CreditCard, ArrowUpRight, Palette, Sun, Moon } from 'lucide-react'
+import { Building2, Mail, CreditCard, ArrowUpRight, Palette, Sun, Moon } from 'lucide-react'
 import { PageHeader } from '@/components/page-header'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useTheme } from '@/hooks/use-theme'
-import { useAuth } from '@/hooks/use-auth'
+import { AccountSecurity } from '@/components/account-security'
 
 export const Route = createFileRoute('/master/configuracoes')({ component: Page })
 
 function Page() {
   const { theme, setTheme } = useTheme()
-  const { user } = useAuth()
   return <div className="space-y-6">
     <PageHeader title="Configurações" description="Preferências do seu painel e orientação para administrar a plataforma." />
     <div className="grid gap-6 lg:grid-cols-2">
@@ -19,7 +18,7 @@ function Page() {
         <Button variant={theme === 'light' ? 'default' : 'outline'} aria-pressed={theme === 'light'} onClick={() => setTheme('light')}><Sun className="h-4 w-4" /> Claro</Button>
         <Button variant={theme === 'dark' ? 'default' : 'outline'} aria-pressed={theme === 'dark'} onClick={() => setTheme('dark')}><Moon className="h-4 w-4" /> Escuro</Button>
       </CardContent></Card>
-      <Card><CardHeader><ShieldCheck className="mb-2 h-5 w-5 text-primary" /><CardTitle>Sua conta administrativa</CardTitle><CardDescription>O acesso Master permite gerenciar todas as imobiliárias da plataforma.</CardDescription></CardHeader><CardContent><p className="break-all text-sm font-medium">{user?.email}</p><p className="mt-2 text-sm text-muted-foreground">Para redefinir sua senha, saia da conta e selecione “Esqueci minha senha” na tela de entrada.</p></CardContent></Card>
+      <AccountSecurity />
     </div>
     <Card><CardHeader><div className="flex items-center gap-3"><Building2 className="h-5 w-5 text-primary" /><CardTitle>Configurações de cada imobiliária</CardTitle></div><CardDescription>Logo, contatos, endereço e equipe pertencem à imobiliária, e não à plataforma inteira.</CardDescription></CardHeader><CardContent className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center"><p className="max-w-2xl text-sm text-muted-foreground">Acesse a lista, abra o menu da imobiliária e escolha “Abrir imobiliária”. Dentro dela, use as seções Configurações e Equipe.</p><Button asChild variant="outline" className="shrink-0"><Link to="/master/lista-imobiliarias">Gerenciar imobiliárias <ArrowUpRight className="h-4 w-4" /></Link></Button></CardContent></Card>
     <div><h2 className="text-lg font-semibold">Comunicação e cobrança</h2><p className="mt-1 text-sm text-muted-foreground">O que o sistema faz hoje e o que ainda precisa de integração.</p></div>

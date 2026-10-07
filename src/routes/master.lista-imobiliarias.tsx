@@ -1,3 +1,4 @@
+import { DeleteCompanyDialog } from '@/components/delete-company-dialog';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -27,6 +28,7 @@ function Page() {
 
   const [newPass, setNewPass] = useState<null | { email: string; password: string }>(null);
   const [confirmCancel, setConfirmCancel] = useState<null | { id: string; name: string }>(null);
+  const [deleting, setDeleting] = useState<null | { id: string; name: string }>(null);
   const [detail, setDetail] = useState<any | null>(null);
   const [q, setQ] = useState(""); const [status, setStatus_] = useState("all"); const [plano, setPlano] = useState("all");
 
@@ -51,6 +53,7 @@ function Page() {
   const totalMrr = filtered.filter((c: any) => c.status === "active").reduce((s:number, c: any) => s + (PLANS[c.plano] ?? 0), 0);
 
   return (<div>
+    {deleting && <DeleteCompanyDialog key={deleting.id} company={deleting} onClose={() => setDeleting(null)} onDeleted={() => { setDeleting(null); setDetail(null); toast.success("Imobiliária excluída"); void qc.invalidateQueries(); }} />}
     <PageHeader title="Imobiliárias" description="Gerencie as empresas, seus planos e o acesso à plataforma." actions={<Button asChild><Link to="/master/nova-imobiliaria"><Plus className="h-4 w-4" /> Nova imobiliária</Link></Button>} />
     <div className="mb-6 grid gap-4 sm:grid-cols-3">{[{label:"Imobiliárias encontradas",value:filtered.length},{label:"Contas ativas",value:filtered.filter((c:any)=>c.status==="active").length},{label:"Receita mensal estimada",value:brl(totalMrr)}].map(item=><div key={item.label} className="rounded-xl border bg-card p-5"><p className="text-sm text-muted-foreground">{item.label}</p><p className="mt-2 text-2xl font-semibold tracking-tight">{item.value}</p></div>)}</div>
     <div className="flex flex-wrap gap-2 mb-4">
@@ -90,6 +93,7 @@ function Page() {
                   <DropdownMenuTrigger asChild><Button size="icon" variant="ghost" aria-label={`Ações de ${c.name}`}><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => setDetail(c)}>Ver detalhes</DropdownMenuItem>
+                    {["blocked", "canceled"].includes(c.status) && <DropdownMenuItem className="text-destructive" onClick={() => setDeleting({ id: c.id, name: c.name })}>Excluir imobiliária</DropdownMenuItem>}
                     <DropdownMenuSeparator />
                     {c.status !== "blocked" && <DropdownMenuItem onClick={() => action(() => setStatus({ data: { companyId: c.id, status: "blocked" } }), "Suspensa")}>Suspender</DropdownMenuItem>}
                     {c.status !== "active" && <DropdownMenuItem onClick={() => action(() => setStatus({ data: { companyId: c.id, status: "active" } }), "Reativada")}>Reativar</DropdownMenuItem>}
