@@ -73,7 +73,7 @@ function Page() {
 
     <Card><CardHeader><CardTitle className="flex items-center gap-2"><CreditCard className="h-5 w-5" />Cobrança manual</CardTitle></CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">Não há faturas automáticas neste template. Combine o pagamento com o administrador.</p>
+        <p className="text-sm text-muted-foreground">Não há faturas automáticas no sistema. Combine o pagamento com o administrador.</p>
         {invoices.map(f => (
           <div key={f.id} className="flex items-center justify-between py-3 border-b last:border-0">
             <div><span className="font-medium">{f.id}</span><span className="text-muted-foreground ml-3 text-sm">{dateBR(f.date)}</span></div>

@@ -1,3 +1,4 @@
+import { HowItWorksCarousel } from '@/components/how-it-works-carousel';
 import { ZimobBrand } from '@/components/zimob-brand';
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
@@ -51,12 +52,6 @@ const PAINS = [
   { icon: DollarSign, t: "Comissões e custos gerenciados em planilha desatualizada" },
 ];
 
-const STEPS = [
-  { n: "01", t: "Cadastre seus imóveis", d: "Cadastre seus imóveis e publique a vitrine da sua imobiliária." },
-  { n: "02", t: "Receba interessados da vitrine", d: "Os formulários da vitrine registram interessados no seu CRM." },
-  { n: "03", t: "Mova leads pelo pipeline", d: "Kanban com 9 estágios visuais. Corretores acompanham cada negociação em tempo real." },
-  { n: "04", t: "Revise oportunidades", d: "O AI Growth Engine identifica leads esquecidos, visitas sem follow-up e propostas paradas." },
-];
 
 const MODULES = [
   { icon: Users, t: "CRM de Leads", d: "Cadastro de interessados, histórico e acompanhamento pelo funil." },
@@ -197,28 +192,28 @@ function Landing() {
         </div>
       </section>
 
-      {/* TURBOSAAS ECOSSISTEMA */}
+      {/* GESTÃO IMOBILIÁRIA */}
       <Section className="bg-app-card py-20">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <Badge className="bg-imob-accent/10 text-imob-accent border-0 mb-3 tracking-wide font-semibold">PARTE DO ECOSSISTEMA TURBOSAAS</Badge>
+            <Badge className="bg-imob-accent/10 text-imob-accent border-0 mb-3 tracking-wide font-semibold">SUA IMOBILIÁRIA, CONECTADA</Badge>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-imob-text dark:text-white">
-              Esse sistema não é só um software — é um{" "}
+              Tudo o que move sua imobiliária{" "}
               <span className="relative inline-block">
-                ativo pronto para revenda
+                em um só lugar
                 <span className="absolute left-0 right-0 -bottom-1 h-[6px] bg-imob-accent/25 rounded-sm -z-10" />
               </span>
             </h2>
           </div>
           <div className="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
             <div className="bg-imob-bg rounded-xl border border-imob-border-light p-7">
-              <h3 className="font-bold text-lg mb-5">Como funciona o modelo TurboSaaS</h3>
+              <h3 className="font-bold text-lg mb-5">Uma rotina mais organizada</h3>
               <ol className="space-y-4">
                 {[
-                  ["1","Você recebe o sistema pronto","Multi-empresa, AI, vitrine — tudo configurado."],
-                  ["2","Use com Supabase e GitHub","O código é seu, hospedado onde quiser."],
-                  ["3","Personaliza a sua marca","Cor, logo, domínio. Vira o seu produto."],
-                  ["4","Começa a vender para imobiliárias","R$197 a R$697/mês recorrente por cliente."],
+                  ["1","Organize seu portfólio","Fotos, valores e informações dos imóveis sempre à mão."],
+                  ["2","Centralize seus atendimentos","Acompanhe interessados e o histórico de cada negociação."],
+                  ["3","Conecte sua equipe","Distribua oportunidades e acompanhe visitas e propostas."],
+                  ["4","Decida com mais clareza","Consulte indicadores e priorize os próximos passos."],
                 ].map(([n,t,d]) => (
                   <li key={n} className="flex gap-4">
                     <div className="h-8 w-8 rounded-full bg-imob-accent text-primary-foreground font-bold flex items-center justify-center shrink-0">{n}</div>
@@ -228,14 +223,14 @@ function Landing() {
               </ol>
             </div>
             <div className="bg-imob-bg rounded-xl border border-imob-border-light p-7">
-              <h3 className="font-bold text-lg mb-5">O que você recebe pronto</h3>
+              <h3 className="font-bold text-lg mb-5">Recursos para o seu dia a dia</h3>
               <ul className="space-y-3">
-                {["Sistema multi-empresa com isolamento de dados","Modo demo público sem necessidade de login","Vitrine white-label por imobiliária","Sugestões por regras integradas ao pipeline","Landing page pública pronta para conversão","Código-fonte 100% customizável","Guia de ativação do backend incluído"].map((f) => (
+                {["Cadastro de imóveis com fotos e informações completas","Vitrine com a identidade da sua imobiliária","CRM para organizar clientes e interessados","Pipeline visual para acompanhar negociações","Agenda de visitas e registro de propostas","Controle de receitas, custos e comissões","Permissões de acesso para sua equipe"].map((f) => (
                   <li key={f} className="flex gap-2.5 text-sm"><Check className="h-4 w-4 text-imob-success shrink-0 mt-0.5" />{f}</li>
                 ))}
               </ul>
               <div className="mt-6 bg-imob-accent text-primary-foreground rounded-lg p-4 font-semibold text-center">
-                Não é um template. É um produto.
+                Mais organização para cuidar de cada oportunidade.
               </div>
             </div>
           </div>
@@ -277,20 +272,7 @@ function Landing() {
               Da captação ao fechamento — em um fluxo organizado
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto relative">
-            {STEPS.map((s, i) => (
-              <div key={s.n} className="relative">
-                <div className="bg-imob-bg border border-imob-border-light rounded-xl p-6 h-full">
-                  <div className="text-imob-accent font-extrabold text-2xl tracking-tight mb-3">{s.n}</div>
-                  <div className="font-bold mb-1.5">{s.t}</div>
-                  <p className="text-sm text-imob-muted leading-relaxed">{s.d}</p>
-                </div>
-                {i < STEPS.length - 1 && (
-                  <ChevronRight className="hidden lg:block absolute top-1/2 -right-3 -translate-y-1/2 h-6 w-6 text-imob-accent/40 z-10" />
-                )}
-              </div>
-            ))}
-          </div>
+          <HowItWorksCarousel />
         </div>
       </Section>
 
@@ -441,7 +423,7 @@ function Landing() {
           </div>
           <div className="border-t border-white/10 pt-6 text-xs text-slate-500 flex flex-wrap items-center justify-between gap-2">
             <span>© 2026 Zimob — Gestão imobiliária.</span>
-            <span>Feito para imobiliárias modernas.</span>
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-slate-300">Feito por <img src="/brand/zivello-logo.png" alt="Zivello" width={1100} height={350} className="h-8 w-auto object-contain" /> para imobiliárias modernas.</span>
           </div>
         </div>
       </footer>
